@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: 2017-10-27T09:12:09Z
+  labels:
+    app: adb
+  name: tenant3-master
+  namespace: default
+  resourceVersion: "1644423"
+  selfLink: /api/v1/namespaces/default/services/tenant3-master
+  uid: e91d4af8-baf6-11e7-9da9-6c92bf4ab1a8
+spec:
+  clusterIP: None
+  ports:
+  - name: adb
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+  selector:
+    app: adb
+    role: master
+    tenancy: tenant3
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}

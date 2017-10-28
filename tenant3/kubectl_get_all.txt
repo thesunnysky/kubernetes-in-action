@@ -1,0 +1,91 @@
+[root@m1 home]# kubectl get all
+NAME                                READY     STATUS    RESTARTS   AGE
+po/adb-apiservice-977715860-hwxpr   1/1       Running   0          11d
+po/adbdms-3663664677-1c2nl          1/1       Running   0          11d
+po/adbops-1046842254-p3vgh          1/1       Running   0          2d
+po/adbrm-2599076652-ks1lw           1/1       Running   0          5h
+po/dtcenter-1823909667-56kz1        1/1       Running   0          11d
+po/keepalived-master-t3693          1/1       Running   2          11d
+po/keepalived-slave-lqwrw           1/1       Running   3          11d
+po/kube-liservice-41nbx             1/1       Running   0          11d
+po/mysql-healthz-2033284195-vkt6s   1/1       Running   0          11d
+po/mysql-master-0                   1/1       Running   0          11d
+po/mysql-slave-0                    1/1       Running   0          11d
+po/tenant1-master-0                 1/1       Running   2          4d
+po/tenant1-standby-0                1/1       Running   0          4d
+po/tenant1-vip-c7b03                1/1       Running   12         4d
+po/tenant2-master-0                 1/1       Running   2          9d
+po/tenant2-standby-0                1/1       Running   0          9d
+po/tenant2-vip-q1vrr                1/1       Running   15         9d
+po/tenant3-master-0                 1/1       Running   0          22h
+po/tenant3-standby-0                1/1       Running   0          22h
+po/tenant3-vip-c5ss6                1/1       Running   1          22h
+po/tenant4-master-0                 1/1       Running   0          5h
+po/tenant4-standby-0                1/1       Running   0          5h
+po/tenant4-vip-x5ht8                1/1       Running   2          5h
+
+NAME                   DESIRED   CURRENT   READY     AGE
+rc/keepalived-master   1         1         1         11d
+rc/keepalived-slave    1         1         1         11d
+rc/kube-liservice      1         1         1         11d
+rc/tenant1-vip         1         1         1         4d
+rc/tenant2-vip         1         1         1         9d
+rc/tenant3-vip         1         1         1         22h
+rc/tenant4-vip         1         1         1         5h
+
+NAME                        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
+svc/adb-apiservice          10.101.85.168    <nodes>       8080:31507/TCP               11d
+svc/adbdms-service          10.105.155.165   <nodes>       8080:31504/TCP               11d
+svc/adbops-service          10.109.110.138   <nodes>       8080:31505/TCP               2d
+svc/adbrm-service           None             <none>        8080/TCP                     5h
+svc/dtcenter-service        10.107.0.215     <nodes>       80:30081/TCP,443:30443/TCP   11d
+svc/kubernetes              10.96.0.1        <none>        443/TCP                      11d
+svc/liservice               10.110.230.200   <none>        8080/TCP                     11d
+svc/mysql-healthz-service   10.111.26.37     <nodes>       8080:30700/TCP               11d
+svc/mysql-master            None             <none>        3306/TCP                     11d
+svc/mysql-slave             None             <none>        3306/TCP                     11d
+svc/mysql-vip               10.98.78.80      <none>        3306/TCP                     11d
+svc/tenant1-master          None             <none>        5432/TCP,22/TCP              4d
+svc/tenant1-standby         None             <none>        5432/TCP,22/TCP              4d
+svc/tenant1-vip             10.107.250.177   <none>        5432/TCP                     4d
+svc/tenant2-master          None             <none>        5432/TCP,22/TCP              9d
+svc/tenant2-standby         None             <none>        5432/TCP,22/TCP              9d
+svc/tenant2-vip             10.105.34.184    <none>        5432/TCP                     9d
+svc/tenant3-master          None             <none>        5432/TCP,22/TCP              22h
+svc/tenant3-standby         None             <none>        5432/TCP,22/TCP              22h
+svc/tenant3-vip             10.102.183.176   <none>        5432/TCP                     22h
+svc/tenant4-master          None             <none>        5432/TCP,22/TCP              5h
+svc/tenant4-standby         None             <none>        5432/TCP,22/TCP              5h
+svc/tenant4-vip             10.98.177.83     <none>        5432/TCP                     5h
+svc/uim-service             10.96.0.20       <none>        80/TCP                       11d
+
+NAME                           DESIRED   CURRENT   AGE
+statefulsets/mysql-master      1         1         11d
+statefulsets/mysql-slave       1         1         11d
+statefulsets/tenant1-master    1         1         4d
+statefulsets/tenant1-standby   1         1         4d
+statefulsets/tenant2-master    1         1         9d
+statefulsets/tenant2-standby   1         1         9d
+statefulsets/tenant3-master    1         1         22h
+statefulsets/tenant3-standby   1         1         22h
+statefulsets/tenant4-master    1         1         5h
+statefulsets/tenant4-standby   1         1         5h
+
+NAME                           DESIRED   SUCCESSFUL   AGE
+jobs/clean-binlog-1508630400   1         1            6d
+
+NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
+deploy/adb-apiservice   1         1         1            1           11d
+deploy/adbdms           1         1         1            1           11d
+deploy/adbops           1         1         1            1           2d
+deploy/adbrm            1         1         1            1           5h
+deploy/dtcenter         1         1         1            1           11d
+deploy/mysql-healthz    1         1         1            1           11d
+
+NAME                          DESIRED   CURRENT   READY     AGE
+rs/adb-apiservice-977715860   1         1         1         11d
+rs/adbdms-3663664677          1         1         1         11d
+rs/adbops-1046842254          1         1         1         2d
+rs/adbrm-2599076652           1         1         1         5h
+rs/dtcenter-1823909667        1         1         1         11d
+rs/mysql-healthz-2033284195   1         1         1         11d

@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubernetes.io/created-by: |
+      {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"default","name":"tenant3-vip","uid":"e952da90-baf6-11e7-9da9-6c92bf4ab1a8","apiVersion":"v1","resourceVersion":"1644445"}}
+    scheduler.alpha.kubernetes.io/tolerations: |
+      [
+            {
+            "key": "dedicated",
+            "operator": "Equal",
+            "value": "master",
+            "effect": "NoSchedule"
+          }
+      ]
+  creationTimestamp: 2017-10-27T09:12:09Z
+  generateName: tenant3-vip-
+  labels:
+    adb: tenant3-vip
+  name: tenant3-vip-c5ss6
+  namespace: default
+  ownerReferences:
+  - apiVersion: v1
+    controller: true
+    kind: ReplicationController
+    name: tenant3-vip
+    uid: e952da90-baf6-11e7-9da9-6c92bf4ab1a8
+  resourceVersion: "1644486"
+  selfLink: /api/v1/namespaces/default/pods/tenant3-vip-c5ss6
+  uid: e953604e-baf6-11e7-9da9-6c92bf4ab1a8
+spec:
+  containers:
+  - args:
+    - --services-configmap=default/tenant3-vip-cm
+    - --vrid=144
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.name
+    - name: POD_NAMESPACE
+      valueFrom:
+        fieldRef:
+          apiVersion: v1
+          fieldPath: metadata.namespace
+    image: docker.dtdream.com/dtdream/kube-keepalived-vip:0.9
+    imagePullPolicy: IfNotPresent
+    name: tenant3-vip
+    resources: {}
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    volumeMounts:
+    - mountPath: /lib/modules
+      name: modules
+      readOnly: true
+    - mountPath: /dev
+      name: dev
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-pgs6m
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  hostNetwork: true
+  nodeName: m1.adb.g1.com
+  nodeSelector:
+    tenancy-tenant3: master
+  restartPolicy: Always
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - hostPath:
+      path: /lib/modules
+    name: modules
+  - hostPath:
+      path: /dev
+    name: dev
+  - name: default-token-pgs6m
+    secret:
+      defaultMode: 420
+      secretName: default-token-pgs6m
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: 2017-10-27T09:12:09Z
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: 2017-10-27T09:12:13Z
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: 2017-10-27T09:12:09Z
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://6aee7739f7a39561e71aa9a7860320326a3f1170500e582184644806df982e1f
+    image: docker.dtdream.com/dtdream/kube-keepalived-vip:0.9
+    imageID: docker://sha256:199891ffbc45a3ee1a7a27aff1e1dc40b24dc1daa78982946dd6ab0043df6668
+    lastState:
+      terminated:
+        containerID: docker://57f586aa6113a548ac1c0754ebcfeb45de5aa7a2a69ce54c7ce249c7b3cf141c
+        exitCode: 255
+        finishedAt: 2017-10-27T09:12:11Z
+        reason: Error
+        startedAt: 2017-10-27T09:12:10Z
+    name: tenant3-vip
+    ready: true
+    restartCount: 1
+    state:
+      running:
+        startedAt: 2017-10-27T09:12:13Z
+  hostIP: 192.168.143.72
+  phase: Running
+  podIP: 192.168.143.72
+  startTime: 2017-10-27T09:12:09Z
