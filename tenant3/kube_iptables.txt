@@ -1,0 +1,121 @@
+[root@m1 ~]# iptables -t nat -nL | grep KUBE
+KUBE-SERVICES  all  --  0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
+KUBE-SERVICES  all  --  0.0.0.0/0            0.0.0.0/0            /* kubernetes service portals */
+
+KUBE-POSTROUTING  all  --  0.0.0.0/0            0.0.0.0/0            /* kubernetes postrouting rules */
+Chain KUBE-MARK-DROP (0 references)
+Chain KUBE-MARK-MASQ (27 references)
+Chain KUBE-NODEPORTS (1 references)
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/dtcenter-service:https */ tcp dpt:30443
+KUBE-SVC-SKH7LOA2C7CD2HIQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/dtcenter-service:https */ tcp dpt:30443
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/monitoring-grafana: */ tcp dpt:30327
+KUBE-SVC-JRXTEHDDTAFMSEAS  tcp  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/monitoring-grafana: */ tcp dpt:30327
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/adb-apiservice:http */ tcp dpt:31507
+KUBE-SVC-RURZADBCFXFVXU2V  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/adb-apiservice:http */ tcp dpt:31507
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/adbdms-service:http */ tcp dpt:31504
+KUBE-SVC-S6ICJGUJQRHVNB2G  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/adbdms-service:http */ tcp dpt:31504
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/adbops-service:http */ tcp dpt:31505
+KUBE-SVC-TXDRYUK3PIVY2MYX  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/adbops-service:http */ tcp dpt:31505
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/dtcenter-service:http */ tcp dpt:30081
+KUBE-SVC-CNMKTXIZIAQCAMSN  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/dtcenter-service:http */ tcp dpt:30081
+KUBE-MARK-MASQ  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/mysql-healthz-service:http */ tcp dpt:30700
+KUBE-SVC-LBOBEJMUGRVNA7T3  tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/mysql-healthz-service:http */ tcp dpt:30700
+Chain KUBE-POSTROUTING (1 references)
+Chain KUBE-SEP-4PD7FPU6JGO7LUTJ (1 references)
+KUBE-MARK-MASQ  all  --  192.168.143.74       0.0.0.0/0            /* default/mysql-vip:mysql */
+Chain KUBE-SEP-6YRNBWJNCIVVR4LN (1 references)
+KUBE-MARK-MASQ  all  --  10.244.0.14          0.0.0.0/0            /* kube-system/kube-dns:dns */
+Chain KUBE-SEP-7DE3JR2BJMH5PDV5 (1 references)
+KUBE-MARK-MASQ  all  --  10.244.3.5           0.0.0.0/0            /* default/adbops-service:http */
+Chain KUBE-SEP-7RAQVNJFEIBSQQPB (1 references)
+KUBE-MARK-MASQ  all  --  10.244.3.2           0.0.0.0/0            /* default/dtcenter-service:https */
+Chain KUBE-SEP-AAJNJKLUKIUTGBWJ (1 references)
+KUBE-MARK-MASQ  all  --  10.244.0.14          0.0.0.0/0            /* kube-system/kube-dns:dns-tcp */
+Chain KUBE-SEP-AQAGUK6N3HNP5WS2 (1 references)
+KUBE-MARK-MASQ  all  --  10.244.3.3           0.0.0.0/0            /* default/adb-apiservice:http */
+Chain KUBE-SEP-BQYNNWQ3W4SBGZTJ (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.6           0.0.0.0/0            /* default/liservice:liservice */
+Chain KUBE-SEP-FSFDVK4JFMIA5K3S (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.3           0.0.0.0/0            /* kube-system/monitoring-influxdb: */
+Chain KUBE-SEP-H7FN6LU3RSH6CC2T (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.2           0.0.0.0/0            /* kube-system/kube-dns:dns-tcp */
+Chain KUBE-SEP-JBTNJKJ27H5DOTKW (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.4           0.0.0.0/0            /* kube-system/monitoring-grafana: */
+Chain KUBE-SEP-KKK5NGOCO2QHLE2A (1 references)
+KUBE-MARK-MASQ  all  --  10.244.1.3           0.0.0.0/0            /* kube-system/kubernetes-dashboard: */
+Chain KUBE-SEP-N7OYGYXN6PVM7KWX (1 references)
+KUBE-MARK-MASQ  all  --  10.244.0.19          0.0.0.0/0            /* default/tenant3-vip:adb */
+Chain KUBE-SEP-PFHSNFPMRZW2POUE (1 references)
+KUBE-MARK-MASQ  all  --  10.244.3.2           0.0.0.0/0            /* default/dtcenter-service:http */
+Chain KUBE-SEP-QE77DN6MXK5POXMQ (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.7           0.0.0.0/0            /* default/mysql-healthz-service:http */
+Chain KUBE-SEP-QOK5TK5GXRGUHRKI (1 references)
+KUBE-MARK-MASQ  all  --  10.244.1.4           0.0.0.0/0            /* default/adbdms-service:http */
+Chain KUBE-SEP-RMAK5P46POOWLP44 (1 references)
+KUBE-MARK-MASQ  all  --  192.168.143.73       0.0.0.0/0            /* default/mysql-vip:mysql */
+Chain KUBE-SEP-TCIZBYBD3WWXNWF5 (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.2           0.0.0.0/0            /* kube-system/kube-dns:dns */
+Chain KUBE-SEP-UFUZPVUFXX2Q2NOD (2 references)
+KUBE-MARK-MASQ  all  --  192.168.143.72       0.0.0.0/0            /* default/kubernetes:https */
+DNAT       tcp  --  0.0.0.0/0            0.0.0.0/0            /* default/kubernetes:https */ recent: SET name: KUBE-SEP-UFUZPVUFXX2Q2NOD side: source mask: 255.255.255.255 tcp to:192.168.143.72:6443
+Chain KUBE-SEP-YOCMTNQB2DFVF2X2 (1 references)
+KUBE-MARK-MASQ  all  --  10.244.3.2           0.0.0.0/0            /* default/uim-service: */
+Chain KUBE-SEP-Z2W6YZVH56FTWK5V (1 references)
+KUBE-MARK-MASQ  all  --  10.244.2.5           0.0.0.0/0            /* kube-system/heapster: */
+Chain KUBE-SERVICES (2 references)
+KUBE-SVC-SKH7LOA2C7CD2HIQ  tcp  --  0.0.0.0/0            10.107.0.215         /* default/dtcenter-service:https cluster IP */ tcp dpt:443
+KUBE-SVC-JRXTEHDDTAFMSEAS  tcp  --  0.0.0.0/0            10.110.7.230         /* kube-system/monitoring-grafana: cluster IP */ tcp dpt:80
+KUBE-SVC-XGLOHA7QRQ3V22RZ  tcp  --  0.0.0.0/0            10.101.240.217       /* kube-system/kubernetes-dashboard: cluster IP */ tcp dpt:80
+KUBE-SVC-RURZADBCFXFVXU2V  tcp  --  0.0.0.0/0            10.101.85.168        /* default/adb-apiservice:http cluster IP */ tcp dpt:8080
+KUBE-SVC-ERIFXISQEP7F7OF4  tcp  --  0.0.0.0/0            10.96.0.10           /* kube-system/kube-dns:dns-tcp cluster IP */ tcp dpt:53
+KUBE-SVC-2FTH5DXWURNCCRFT  tcp  --  0.0.0.0/0            10.98.78.80          /* default/mysql-vip:mysql cluster IP */ tcp dpt:3306
+KUBE-SVC-S6ICJGUJQRHVNB2G  tcp  --  0.0.0.0/0            10.105.155.165       /* default/adbdms-service:http cluster IP */ tcp dpt:8080
+KUBE-SVC-BJM46V3U5RZHCFRZ  tcp  --  0.0.0.0/0            10.107.46.44         /* kube-system/heapster: cluster IP */ tcp dpt:80
+KUBE-SVC-CRITJZRK23D27Q3K  tcp  --  0.0.0.0/0            10.110.230.200       /* default/liservice:liservice cluster IP */ tcp dpt:8080
+KUBE-SVC-TCOU7JCQXEZGVUNU  udp  --  0.0.0.0/0            10.96.0.10           /* kube-system/kube-dns:dns cluster IP */ udp dpt:53
+KUBE-SVC-AZHJEWGPJBDBI6EL  tcp  --  0.0.0.0/0            10.96.0.20           /* default/uim-service: cluster IP */ tcp dpt:80
+KUBE-SVC-TXDRYUK3PIVY2MYX  tcp  --  0.0.0.0/0            10.109.110.138       /* default/adbops-service:http cluster IP */ tcp dpt:8080
+KUBE-SVC-NPX46M4PTMTKRN6Y  tcp  --  0.0.0.0/0            10.96.0.1            /* default/kubernetes:https cluster IP */ tcp dpt:443
+KUBE-SVC-LMO3LRC53QI7NXS2  tcp  --  0.0.0.0/0            10.102.183.176       /* default/tenant3-vip:adb cluster IP */ tcp dpt:5432
+KUBE-SVC-CNMKTXIZIAQCAMSN  tcp  --  0.0.0.0/0            10.107.0.215         /* default/dtcenter-service:http cluster IP */ tcp dpt:80
+KUBE-SVC-LBOBEJMUGRVNA7T3  tcp  --  0.0.0.0/0            10.111.26.37         /* default/mysql-healthz-service:http cluster IP */ tcp dpt:8080
+KUBE-SVC-Q6XJQ2I55QTBQCWT  tcp  --  0.0.0.0/0            10.109.31.89         /* kube-system/monitoring-influxdb: cluster IP */ tcp dpt:8086
+KUBE-NODEPORTS  all  --  0.0.0.0/0            0.0.0.0/0            /* kubernetes service nodeports; NOTE: this must be the last rule in this chain */ ADDRTYPE match dst-type LOCAL
+Chain KUBE-SVC-2FTH5DXWURNCCRFT (1 references)
+KUBE-SEP-RMAK5P46POOWLP44  all  --  0.0.0.0/0            0.0.0.0/0            /* default/mysql-vip:mysql */ statistic mode random probability 0.50000000000
+KUBE-SEP-4PD7FPU6JGO7LUTJ  all  --  0.0.0.0/0            0.0.0.0/0            /* default/mysql-vip:mysql */
+Chain KUBE-SVC-AZHJEWGPJBDBI6EL (1 references)
+KUBE-SEP-YOCMTNQB2DFVF2X2  all  --  0.0.0.0/0            0.0.0.0/0            /* default/uim-service: */
+Chain KUBE-SVC-BJM46V3U5RZHCFRZ (1 references)
+KUBE-SEP-Z2W6YZVH56FTWK5V  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/heapster: */
+Chain KUBE-SVC-CNMKTXIZIAQCAMSN (2 references)
+KUBE-SEP-PFHSNFPMRZW2POUE  all  --  0.0.0.0/0            0.0.0.0/0            /* default/dtcenter-service:http */
+Chain KUBE-SVC-CRITJZRK23D27Q3K (1 references)
+KUBE-SEP-BQYNNWQ3W4SBGZTJ  all  --  0.0.0.0/0            0.0.0.0/0            /* default/liservice:liservice */
+Chain KUBE-SVC-ERIFXISQEP7F7OF4 (1 references)
+KUBE-SEP-AAJNJKLUKIUTGBWJ  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/kube-dns:dns-tcp */ statistic mode random probability 0.50000000000
+KUBE-SEP-H7FN6LU3RSH6CC2T  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/kube-dns:dns-tcp */
+Chain KUBE-SVC-JRXTEHDDTAFMSEAS (2 references)
+KUBE-SEP-JBTNJKJ27H5DOTKW  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/monitoring-grafana: */
+Chain KUBE-SVC-LBOBEJMUGRVNA7T3 (2 references)
+KUBE-SEP-QE77DN6MXK5POXMQ  all  --  0.0.0.0/0            0.0.0.0/0            /* default/mysql-healthz-service:http */
+Chain KUBE-SVC-LMO3LRC53QI7NXS2 (1 references)
+KUBE-SEP-N7OYGYXN6PVM7KWX  all  --  0.0.0.0/0            0.0.0.0/0            /* default/tenant3-vip:adb */
+Chain KUBE-SVC-NPX46M4PTMTKRN6Y (1 references)
+KUBE-SEP-UFUZPVUFXX2Q2NOD  all  --  0.0.0.0/0            0.0.0.0/0            /* default/kubernetes:https */ recent: CHECK seconds: 10800 reap name: KUBE-SEP-UFUZPVUFXX2Q2NOD side: source mask: 255.255.255.255
+KUBE-SEP-UFUZPVUFXX2Q2NOD  all  --  0.0.0.0/0            0.0.0.0/0            /* default/kubernetes:https */
+Chain KUBE-SVC-Q6XJQ2I55QTBQCWT (1 references)
+KUBE-SEP-FSFDVK4JFMIA5K3S  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/monitoring-influxdb: */
+Chain KUBE-SVC-RURZADBCFXFVXU2V (2 references)
+KUBE-SEP-AQAGUK6N3HNP5WS2  all  --  0.0.0.0/0            0.0.0.0/0            /* default/adb-apiservice:http */
+Chain KUBE-SVC-S6ICJGUJQRHVNB2G (2 references)
+KUBE-SEP-QOK5TK5GXRGUHRKI  all  --  0.0.0.0/0            0.0.0.0/0            /* default/adbdms-service:http */
+Chain KUBE-SVC-SKH7LOA2C7CD2HIQ (2 references)
+KUBE-SEP-7RAQVNJFEIBSQQPB  all  --  0.0.0.0/0            0.0.0.0/0            /* default/dtcenter-service:https */
+Chain KUBE-SVC-TCOU7JCQXEZGVUNU (1 references)
+KUBE-SEP-6YRNBWJNCIVVR4LN  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/kube-dns:dns */ statistic mode random probability 0.50000000000
+KUBE-SEP-TCIZBYBD3WWXNWF5  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/kube-dns:dns */
+Chain KUBE-SVC-TXDRYUK3PIVY2MYX (2 references)
+KUBE-SEP-7DE3JR2BJMH5PDV5  all  --  0.0.0.0/0            0.0.0.0/0            /* default/adbops-service:http */
+Chain KUBE-SVC-XGLOHA7QRQ3V22RZ (1 references)
+KUBE-SEP-KKK5NGOCO2QHLE2A  all  --  0.0.0.0/0            0.0.0.0/0            /* kube-system/kubernetes-dashboard: */
