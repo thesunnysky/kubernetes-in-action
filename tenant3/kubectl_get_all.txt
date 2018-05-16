@@ -1,91 +1,199 @@
-[root@m1 home]# kubectl get all
-NAME                                READY     STATUS    RESTARTS   AGE
-po/adb-apiservice-977715860-hwxpr   1/1       Running   0          11d
-po/adbdms-3663664677-1c2nl          1/1       Running   0          11d
-po/adbops-1046842254-p3vgh          1/1       Running   0          2d
-po/adbrm-2599076652-ks1lw           1/1       Running   0          5h
-po/dtcenter-1823909667-56kz1        1/1       Running   0          11d
-po/keepalived-master-t3693          1/1       Running   2          11d
-po/keepalived-slave-lqwrw           1/1       Running   3          11d
-po/kube-liservice-41nbx             1/1       Running   0          11d
-po/mysql-healthz-2033284195-vkt6s   1/1       Running   0          11d
-po/mysql-master-0                   1/1       Running   0          11d
-po/mysql-slave-0                    1/1       Running   0          11d
-po/tenant1-master-0                 1/1       Running   2          4d
-po/tenant1-standby-0                1/1       Running   0          4d
-po/tenant1-vip-c7b03                1/1       Running   12         4d
-po/tenant2-master-0                 1/1       Running   2          9d
-po/tenant2-standby-0                1/1       Running   0          9d
-po/tenant2-vip-q1vrr                1/1       Running   15         9d
-po/tenant3-master-0                 1/1       Running   0          22h
-po/tenant3-standby-0                1/1       Running   0          22h
-po/tenant3-vip-c5ss6                1/1       Running   1          22h
-po/tenant4-master-0                 1/1       Running   0          5h
-po/tenant4-standby-0                1/1       Running   0          5h
-po/tenant4-vip-x5ht8                1/1       Running   2          5h
+cleanOldApiServiceKeyStore = "keytool -delete -alias apiservice -keystore apiservice.keystore -storepass changeit"
+genApiServiceKeyStore = "keytool -genkey -alias apiservice -keypass changeit -keyalg RSA -keysize 1024 -validity 3650 " \
+						"-keystore {basePath}/tmp/apiservice.keystore -storepass changeit -ext san=ip:{serviceIp} " \
+						"-dname \"CN={serviceIp}, OU=DtDream, O=ADB, L=HangZhou, ST=ZheJiang, C=China\"" \
+	.format(basePath=basePath, serviceIp=vip)
+saveApiServiceCrt = "keytool -export -alias apiservice -keystore {basePath}/tmp/apiservice.keystore -file " \
+					"{basePath}/tmp/apiservice.cer -storepass changeit".format(basePath=basePath)
+					
+					
+1. 					
+keytool -delete -alias apiservice -keystore apiservice.keystore -storepass changeit					
+2.
+keytool -genkey -alias apiservice -keypass changeit -keyalg RSA -keysize 1024 -validity 3650 -keystore {basePath}/tmp/apiservice.keystore -storepass changeit -ext san=ip:192.168.143.141 -dname "CN={serviceIp}, OU=DtDream, O=ADB, L=HangZhou, ST=ZheJiang, C=China"
+3. 
+keytool -export -alias apiservice -keystore {basePath}/tmp/apiservice.keystore -file {basePath}/tmp/apiservice.cer -storepass changeit
 
-NAME                   DESIRED   CURRENT   READY     AGE
-rc/keepalived-master   1         1         1         11d
-rc/keepalived-slave    1         1         1         11d
-rc/kube-liservice      1         1         1         11d
-rc/tenant1-vip         1         1         1         4d
-rc/tenant2-vip         1         1         1         9d
-rc/tenant3-vip         1         1         1         22h
-rc/tenant4-vip         1         1         1         5h
 
-NAME                        CLUSTER-IP       EXTERNAL-IP   PORT(S)                      AGE
-svc/adb-apiservice          10.101.85.168    <nodes>       8080:31507/TCP               11d
-svc/adbdms-service          10.105.155.165   <nodes>       8080:31504/TCP               11d
-svc/adbops-service          10.109.110.138   <nodes>       8080:31505/TCP               2d
-svc/adbrm-service           None             <none>        8080/TCP                     5h
-svc/dtcenter-service        10.107.0.215     <nodes>       80:30081/TCP,443:30443/TCP   11d
-svc/kubernetes              10.96.0.1        <none>        443/TCP                      11d
-svc/liservice               10.110.230.200   <none>        8080/TCP                     11d
-svc/mysql-healthz-service   10.111.26.37     <nodes>       8080:30700/TCP               11d
-svc/mysql-master            None             <none>        3306/TCP                     11d
-svc/mysql-slave             None             <none>        3306/TCP                     11d
-svc/mysql-vip               10.98.78.80      <none>        3306/TCP                     11d
-svc/tenant1-master          None             <none>        5432/TCP,22/TCP              4d
-svc/tenant1-standby         None             <none>        5432/TCP,22/TCP              4d
-svc/tenant1-vip             10.107.250.177   <none>        5432/TCP                     4d
-svc/tenant2-master          None             <none>        5432/TCP,22/TCP              9d
-svc/tenant2-standby         None             <none>        5432/TCP,22/TCP              9d
-svc/tenant2-vip             10.105.34.184    <none>        5432/TCP                     9d
-svc/tenant3-master          None             <none>        5432/TCP,22/TCP              22h
-svc/tenant3-standby         None             <none>        5432/TCP,22/TCP              22h
-svc/tenant3-vip             10.102.183.176   <none>        5432/TCP                     22h
-svc/tenant4-master          None             <none>        5432/TCP,22/TCP              5h
-svc/tenant4-standby         None             <none>        5432/TCP,22/TCP              5h
-svc/tenant4-vip             10.98.177.83     <none>        5432/TCP                     5h
-svc/uim-service             10.96.0.20       <none>        80/TCP                       11d
 
-NAME                           DESIRED   CURRENT   AGE
-statefulsets/mysql-master      1         1         11d
-statefulsets/mysql-slave       1         1         11d
-statefulsets/tenant1-master    1         1         4d
-statefulsets/tenant1-standby   1         1         4d
-statefulsets/tenant2-master    1         1         9d
-statefulsets/tenant2-standby   1         1         9d
-statefulsets/tenant3-master    1         1         22h
-statefulsets/tenant3-standby   1         1         22h
-statefulsets/tenant4-master    1         1         5h
-statefulsets/tenant4-standby   1         1         5h
+{
+  "apiVersion": "v1",
+  "kind": "ReplicationController",
+  "metadata": {
+    "name": "big-vip"
+  },
+  "spec": {
+    "replicas": 1,
+    "template": {
+      "metadata": {
+        "labels": {
+          "adb": "big-vip"                                                                                                                                                 
+        },                                                                                                                                                                 
+        "annotations": {
+          "scheduler.alpha.kubernetes.io/tolerations": "[\n      {\n      \"key\": \"dedicated\",\n      \"operator\": \"Equal\",\n      \"value\": \"master\",\n      \"effect\": \"NoSchedu
+le\"\n    }\n]\n"
+        }
+      },
+      "spec": {
+        "nodeSelector": {
+          "tenancy-big": "master"
+        },
+        "hostNetwork": true,
+        "containers": [
+          {
+            "image": "docker.dtdream.com/dtdream/kube-keepalived-vip:0.9",
+            "name": "big-vip",                                                                                                                                                                 
+                "name": "POD_NAME",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.name"
+                  }
+                }
+              },
+              {
+                "name": "POD_NAMESPACE",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.namespace"
+                  }
+                }
+              }
+            ],
+            "args": [
+              "--services-configmap=default/big-vip-cm",
+              "--vrid=35"
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "modules",
+            "hostPath": {
+              "path": "/lib/modules"
+            }
+          },
+          {
+            "name": "dev",
+            "hostPath": {
+              "path": "/dev"
+            }
+          }
+        ]
+      }                                                                                                                                                                    
+    }                                                                                                                                                                      
+  }                                                                                                                                                                        
+}  	
 
-NAME                           DESIRED   SUCCESSFUL   AGE
-jobs/clean-binlog-1508630400   1         1            6d
 
-NAME                    DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-deploy/adb-apiservice   1         1         1            1           11d
-deploy/adbdms           1         1         1            1           11d
-deploy/adbops           1         1         1            1           2d
-deploy/adbrm            1         1         1            1           5h
-deploy/dtcenter         1         1         1            1           11d
-deploy/mysql-healthz    1         1         1            1           11d
+				"{\n" +
+                "  \"apiVersion\": \"v1\",\n" +
+                "  \"kind\": \"ReplicationController\",\n" +
+                "  \"metadata\": {\n" +
+                "    \"name\": \"" + controllerName + "\"\n" +
+                "  },\n" +
+                "  \"spec\": {\n" +
+                "    \"replicas\": 1,\n" +
+                "    \"template\": {\n" +
+                "      \"metadata\": {\n" +
+                "        \"labels\": {\n" +
+                "          \"adb\": \"" + controllerName + "\"\n" +
+                "        },\n" +
+                "        \"annotations\": {\n" +
+                "          \"scheduler.alpha.kubernetes.io/tolerations\": \"[\\n      {\\n      \\\"key\\\": \\\"dedicated\\\",\\n      \\\"operator\\\": \\\"Equal\\\",\\n      \\\"value\\\": \\\"master\\\",\\n      \\\"effect\\\": \\\"NoSchedule\\\"\\n    }\\n]\\n\"\n" +
+                "        }\n" +
+                "      },\n" +
+                "      \"spec\": {\n" +
+                "        \"nodeSelector\": {\n" +
+                "          \"tenancy-" + tenancy + "\": \"" + curMasterOriginalRole.toLowerCase() + "\"\n" +
+                "        },\n" +
+                "        \"hostNetwork\": true,\n" +
+                "        \"containers\": [\n" +
+                "          {\n" +
+                "            \"image\": \"docker.dtdream.com/dtdream/kube-keepalived-vip:0.9\",\n" +
+                "            \"name\": \"" + controllerName + "\",\n" +
+                "            \"imagePullPolicy\": \"IfNotPresent\",\n" +
+                "            \"securityContext\": {\n" +
+                "              \"privileged\": true\n" +
+                "            },\n" +
+                "            \"volumeMounts\": [\n" +
+                "              {\n" +
+                "                \"mountPath\": \"/lib/modules\",\n" +
+                "                \"name\": \"modules\",\n" +
+                "                \"readOnly\": true\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"mountPath\": \"/dev\",\n" +
+                "                \"name\": \"dev\"\n" +
+                "              }\n" +
+                "            ],\n" +
+                "            \"env\": [\n" +
+                "              {\n" +
+                "                \"name\": \"POD_NAME\",\n" +
+                "                \"valueFrom\": {\n" +
+                "                  \"fieldRef\": {\n" +
+                "                    \"fieldPath\": \"metadata.name\"\n" +
+                "                  }\n" +
+                "                }\n" +
+                "              },\n" +
+                "              {\n" +
+                "                \"name\": \"POD_NAMESPACE\",\n" +
+                "                \"valueFrom\": {\n" +
+                "                  \"fieldRef\": {\n" +
+                "                    \"fieldPath\": \"metadata.namespace\"\n" +
+                "                  }\n" +
+                "                }\n" +
+                "              }\n" +
+                "            ],\n" +
+                "            \"args\": [\n" +
+                "              \"--services-configmap=default/" + cmName + "\",\n" +
+                "              \"--vrid=" + vrid + "\"\n" +
+                "            ]\n" +
+                "          }\n" +
+                "        ],\n" +
+                "        \"volumes\": [\n" +
+                "          {\n" +
+                "            \"name\": \"modules\",\n" +
+                "            \"hostPath\": {\n" +
+                "              \"path\": \"/lib/modules\"\n" +
+                "            }\n" +
+                "          },\n" +
+                "          {\n" +
+                "            \"name\": \"dev\",\n" +
+                "            \"hostPath\": {\n" +
+                "              \"path\": \"/dev\"\n" +
+                "            }\n" +
+                "          }\n" +
+                "        ]\n" +
+                "      }\n" +
+                "    }\n" +
+                "  }\n" +
+                "}";
 
-NAME                          DESIRED   CURRENT   READY     AGE
-rs/adb-apiservice-977715860   1         1         1         11d
-rs/adbdms-3663664677          1         1         1         11d
-rs/adbops-1046842254          1         1         1         2d
-rs/adbrm-2599076652           1         1         1         5h
-rs/dtcenter-1823909667        1         1         1         11d
-rs/mysql-healthz-2033284195   1         1         1         11d
+100 * l00				
+Transition Finished, Start at 2017-11-22 19:11:34, End at 2017-11-22 19:14:35,Cost 180 Seconds, DataCount:300000, Thread Num:1, InsertNumPerSql:100, Commit:100, Speed:1660/s
+Transition Finished, Start at 2017-11-22 17:26:46, End at 2017-11-22 17:33:46,Cost 419 Seconds, DataCount:2500000, Thread Num:8, InsertNumPerSql:100, Commit:100, Speed:5953/s
+Transition Finished, Start at 2017-11-22 19:15:33, End at 2017-11-22 19:29:27,Cost 833 Seconds, DataCount:5000000, Thread Num:16, InsertNumPerSql:100, Commit:100, Speed:5996/s
+
+1* 1000
+Transition Finished, Start at 2017-11-22 19:35:44, End at 2017-11-22 19:38:36,Cost 172 Seconds, DataCount:10000, Thread Num:1, InsertNumPerSql:1, Commit:1000, Speed:58/s
+Transition Finished, Start at 2017-11-22 19:39:46, End at 2017-11-22 19:41:43,Cost 117 Seconds, DataCount:100000, Thread Num:8, InsertNumPerSql:1, Commit:1000, Speed:848/s
+Transition Finished, Start at 2017-11-22 19:42:53, End at 2017-11-22 19:47:45,Cost 291 Seconds, DataCount:500000, Thread Num:16, InsertNumPerSql:1, Commit:1000, Speed:1713/s
+
+1000 * 100
+Transition Finished, Start at 2017-11-22 19:49:18, End at 2017-11-22 19:59:48,Cost 630 Seconds, DataCount:1500000, Thread Num:1, InsertNumPerSql:1000, Commit:100, Speed:2380/s
+Transition Finished, Start at 2017-11-22 20:01:26, End at 2017-11-22 20:08:22,Cost 415 Seconds, DataCount:3000000, Thread Num:8, InsertNumPerSql:1000, Commit:100, Speed:7212/s
+
+
+大集群 Ao-col
+Transition Finished, Start at 2017-11-24 09:43:22, End at 2017-11-24 09:47:02,Cost 220 Seconds, DataCount:10000, Thread Num:1, InsertNumPerSql:1, Commit:1, Speed:45/s
+
+小集群：ao-appendonly
+Transition Finished, Start at 2017-11-24 10:09:24, End at 2017-11-24 10:11:09,Cost 105 Seconds, DataCount:10000, Thread Num:1, InsertNumPerSql:1, Commit:1, Speed:95/s
+
+	
+#1  0x0000000000851c8f in LockRelationOid (relid=24588, lockmode=1) at lmgr.c:82
+#2  0x00000000004b6e91 in relation_open (relationId=24588, lockmode=1) at heapam.c:940
+#3  0x00000000004b775c in heap_open (relationId=24588, lockmode=1) at heapam.c:1376
+	
+$6 = {locktag_field1 = 17308, locktag_field2 = 24588, locktag_field3 = 0, locktag_field4 = 0, locktag_type = 0 '\000', locktag_lockmethodid = 1 '\001'}	
+

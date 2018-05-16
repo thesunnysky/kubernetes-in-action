@@ -1,0 +1,207 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: 2017-10-27T09:12:09Z
+  labels:
+    app: tenant3-vip
+  name: tenant3-vip
+  namespace: default
+  resourceVersion: "1644454"
+  selfLink: /api/v1/namespaces/default/services/tenant3-vip
+  uid: e95c82d5-baf6-11e7-9da9-6c92bf4ab1a8
+spec:
+  clusterIP: 10.102.183.176
+  ports:
+  - name: adb
+    port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: adb
+    role: master
+    tenancy: tenant3
+  sessionAffinity: None
+  type: ClusterIP
+status:
+  loadBalancer: {}
+
+==========================================
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    kubernetes.io/created-by: |
+      {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"StatefulSet","namespace":"default","name":"tenant3-master","uid":"e9225f23-baf6-11e7-9da9-6c92bf4ab1a8","apiVersion":"apps","resourceVersion":"1644425"}}
+    pod.beta.kubernetes.io/hostname: tenant3-master-0
+    pod.beta.kubernetes.io/subdomain: tenant3-master
+    scheduler.alpha.kubernetes.io/tolerations: |
+      [
+            {
+            "key": "dedicated",
+            "operator": "Equal",
+            "value": "master",
+            "effect": "NoSchedule"
+          }
+      ]
+  creationTimestamp: 2017-10-27T09:12:09Z
+  generateName: tenant3-master-
+  labels:
+    app: adb
+    role: master
+    tenancy: tenant3
+  name: tenant3-master-0
+  namespace: default
+  resourceVersion: "1644473"
+  selfLink: /api/v1/namespaces/default/pods/tenant3-master-0
+  uid: e9234827-baf6-11e7-9da9-6c92bf4ab1a8
+spec:
+  containers:
+  - command:
+    - /bin/sh
+    - -c
+    - /entry/entry-point.sh
+    env:
+    - name: MEMORY_LIMIT
+      value: "2048"
+    - name: MASTER
+      value: tenant3-master
+    - name: STANDBY
+      value: tenant3-standby
+    - name: RM_ADDR
+      valueFrom:
+        configMapKeyRef:
+          key: rm.addr
+          name: adbops-cm
+    - name: RM_PORT
+      valueFrom:
+        configMapKeyRef:
+          key: rm.port
+          name: adbops-cm
+    - name: ADB_ADMIN
+      valueFrom:
+        secretKeyRef:
+          key: adb.admin
+          name: adb-connect-secret
+    - name: ADB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: adb.password
+          name: adb-connect-secret
+    - name: MYSQL_ADDR
+      valueFrom:
+        configMapKeyRef:
+          key: mysql.vip
+          name: mysql-configmap
+    - name: MYSQL_USER
+      valueFrom:
+        secretKeyRef:
+          key: user
+          name: mysql-connect
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: password
+          name: mysql-connect
+    image: docker.dtdream.com/adb/adb-control:v1.1.0
+    imagePullPolicy: IfNotPresent
+    name: tenant3-master
+    resources:
+      limits:
+        memory: 16Gi
+      requests:
+        memory: 16Gi
+    terminationMessagePath: /dev/termination-log
+    volumeMounts:
+    - mountPath: /home/gpadmin/data
+      name: data
+    - mountPath: /home/gpadmin/gpAdminLogs
+      name: adminlog
+    - mountPath: /opt/root-ssh
+      name: root-ssh-volume
+      readOnly: true
+    - mountPath: /opt/gpadmin-ssh
+      name: gpadmin-ssh-volume
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: default-token-pgs6m
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  hostname: tenant3-master
+  nodeName: m1.adb.g1.com
+  nodeSelector:
+    tenancy-tenant3: master
+  restartPolicy: Always
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - name: gpadmin-ssh-volume
+    secret:
+      defaultMode: 420
+      items:
+      - key: authorized_keys
+        mode: 384
+        path: authorized_keys
+      - key: id_rsa
+        mode: 384
+        path: id_rsa
+      - key: id_rsa.pub
+        path: id_rsa.pub
+      - key: known_hosts
+        path: known_hosts
+      secretName: gpadmin-ssh-key
+  - hostPath:
+      path: /data0/tenant3/data
+    name: data
+  - hostPath:
+      path: /data0/tenant3/adminlog
+    name: adminlog
+  - name: root-ssh-volume
+    secret:
+      defaultMode: 420
+      items:
+      - key: authorized_keys
+        mode: 384
+        path: authorized_keys
+      - key: id_rsa
+        mode: 384
+        path: id_rsa
+      - key: id_rsa.pub
+        path: id_rsa.pub
+      - key: known_hosts
+        path: known_hosts
+      secretName: root-ssh-key
+  - name: default-token-pgs6m
+    secret:
+      defaultMode: 420
+      secretName: default-token-pgs6m
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: 2017-10-27T09:12:09Z
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: 2017-10-27T09:12:11Z
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: 2017-10-27T09:12:09Z
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://a3fa625f3a72bb14e3f3f81720ab7148ba84bec6d41ed67ab0ff5d60a59b5d38
+    image: docker.dtdream.com/adb/adb-control:v1.1.0
+    imageID: docker://sha256:9b210acf397473cdc418f57c077871f25d9a81f878a7fb6da889335b21fabc7a
+    lastState: {}
+    name: tenant3-master
+    ready: true
+    restartCount: 0
+    state:
+      running:
+        startedAt: 2017-10-27T09:12:11Z
+  hostIP: 192.168.143.72
+  phase: Running
+  podIP: 10.244.0.19
+  startTime: 2017-10-27T09:12:09Z

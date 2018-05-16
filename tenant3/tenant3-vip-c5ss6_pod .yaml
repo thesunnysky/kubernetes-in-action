@@ -3,7 +3,9 @@ kind: Pod
 metadata:
   annotations:
     kubernetes.io/created-by: |
-      {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"ReplicationController","namespace":"default","name":"tenant3-vip","uid":"e952da90-baf6-11e7-9da9-6c92bf4ab1a8","apiVersion":"v1","resourceVersion":"1644445"}}
+      {"kind":"SerializedReference","apiVersion":"v1","reference":{"kind":"StatefulSet","namespace":"default","name":"tenant3-master","uid":"e9225f23-baf6-11e7-9da9-6c92bf4ab1a8","apiVersion":"apps","resourceVersion":"1644425"}}
+    pod.beta.kubernetes.io/hostname: tenant3-master-0
+    pod.beta.kubernetes.io/subdomain: tenant3-master
     scheduler.alpha.kubernetes.io/tolerations: |
       [
             {
@@ -14,54 +16,89 @@ metadata:
           }
       ]
   creationTimestamp: 2017-10-27T09:12:09Z
-  generateName: tenant3-vip-
+  generateName: tenant3-master-
   labels:
-    adb: tenant3-vip
-  name: tenant3-vip-c5ss6
+    app: adb
+    role: master
+    tenancy: tenant3
+  name: tenant3-master-0
   namespace: default
-  ownerReferences:
-  - apiVersion: v1
-    controller: true
-    kind: ReplicationController
-    name: tenant3-vip
-    uid: e952da90-baf6-11e7-9da9-6c92bf4ab1a8
-  resourceVersion: "1644486"
-  selfLink: /api/v1/namespaces/default/pods/tenant3-vip-c5ss6
-  uid: e953604e-baf6-11e7-9da9-6c92bf4ab1a8
+  resourceVersion: "1644473"
+  selfLink: /api/v1/namespaces/default/pods/tenant3-master-0
+  uid: e9234827-baf6-11e7-9da9-6c92bf4ab1a8
 spec:
   containers:
-  - args:
-    - --services-configmap=default/tenant3-vip-cm
-    - --vrid=144
+  - command:
+    - /bin/sh
+    - -c
+    - /entry/entry-point.sh
     env:
-    - name: POD_NAME
+    - name: MEMORY_LIMIT
+      value: "2048"
+    - name: MASTER
+      value: tenant3-master
+    - name: STANDBY
+      value: tenant3-standby
+    - name: RM_ADDR
       valueFrom:
-        fieldRef:
-          apiVersion: v1
-          fieldPath: metadata.name
-    - name: POD_NAMESPACE
+        configMapKeyRef:
+          key: rm.addr
+          name: adbops-cm
+    - name: RM_PORT
       valueFrom:
-        fieldRef:
-          apiVersion: v1
-          fieldPath: metadata.namespace
-    image: docker.dtdream.com/dtdream/kube-keepalived-vip:0.9
+        configMapKeyRef:
+          key: rm.port
+          name: adbops-cm
+    - name: ADB_ADMIN
+      valueFrom:
+        secretKeyRef:
+          key: adb.admin
+          name: adb-connect-secret
+    - name: ADB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: adb.password
+          name: adb-connect-secret
+    - name: MYSQL_ADDR
+      valueFrom:
+        configMapKeyRef:
+          key: mysql.vip
+          name: mysql-configmap
+    - name: MYSQL_USER
+      valueFrom:
+        secretKeyRef:
+          key: user
+          name: mysql-connect
+    - name: MYSQL_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          key: password
+          name: mysql-connect
+    image: docker.dtdream.com/adb/adb-control:v1.1.0
     imagePullPolicy: IfNotPresent
-    name: tenant3-vip
-    resources: {}
-    securityContext:
-      privileged: true
+    name: tenant3-master
+    resources:
+      limits:
+        memory: 16Gi
+      requests:
+        memory: 16Gi
     terminationMessagePath: /dev/termination-log
     volumeMounts:
-    - mountPath: /lib/modules
-      name: modules
+    - mountPath: /home/gpadmin/data
+      name: data
+    - mountPath: /home/gpadmin/gpAdminLogs
+      name: adminlog
+    - mountPath: /opt/root-ssh
+      name: root-ssh-volume
       readOnly: true
-    - mountPath: /dev
-      name: dev
+    - mountPath: /opt/gpadmin-ssh
+      name: gpadmin-ssh-volume
+      readOnly: true
     - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
       name: default-token-pgs6m
       readOnly: true
   dnsPolicy: ClusterFirst
-  hostNetwork: true
+  hostname: tenant3-master
   nodeName: m1.adb.g1.com
   nodeSelector:
     tenancy-tenant3: master
@@ -71,12 +108,42 @@ spec:
   serviceAccountName: default
   terminationGracePeriodSeconds: 30
   volumes:
+  - name: gpadmin-ssh-volume
+    secret:
+      defaultMode: 420
+      items:
+      - key: authorized_keys
+        mode: 384
+        path: authorized_keys
+      - key: id_rsa
+        mode: 384
+        path: id_rsa
+      - key: id_rsa.pub
+        path: id_rsa.pub
+      - key: known_hosts
+        path: known_hosts
+      secretName: gpadmin-ssh-key
   - hostPath:
-      path: /lib/modules
-    name: modules
+      path: /data0/tenant3/data
+    name: data
   - hostPath:
-      path: /dev
-    name: dev
+      path: /data0/tenant3/adminlog
+    name: adminlog
+  - name: root-ssh-volume
+    secret:
+      defaultMode: 420
+      items:
+      - key: authorized_keys
+        mode: 384
+        path: authorized_keys
+      - key: id_rsa
+        mode: 384
+        path: id_rsa
+      - key: id_rsa.pub
+        path: id_rsa.pub
+      - key: known_hosts
+        path: known_hosts
+      secretName: root-ssh-key
   - name: default-token-pgs6m
     secret:
       defaultMode: 420
@@ -88,7 +155,7 @@ status:
     status: "True"
     type: Initialized
   - lastProbeTime: null
-    lastTransitionTime: 2017-10-27T09:12:13Z
+    lastTransitionTime: 2017-10-27T09:12:11Z
     status: "True"
     type: Ready
   - lastProbeTime: null
@@ -96,23 +163,17 @@ status:
     status: "True"
     type: PodScheduled
   containerStatuses:
-  - containerID: docker://6aee7739f7a39561e71aa9a7860320326a3f1170500e582184644806df982e1f
-    image: docker.dtdream.com/dtdream/kube-keepalived-vip:0.9
-    imageID: docker://sha256:199891ffbc45a3ee1a7a27aff1e1dc40b24dc1daa78982946dd6ab0043df6668
-    lastState:
-      terminated:
-        containerID: docker://57f586aa6113a548ac1c0754ebcfeb45de5aa7a2a69ce54c7ce249c7b3cf141c
-        exitCode: 255
-        finishedAt: 2017-10-27T09:12:11Z
-        reason: Error
-        startedAt: 2017-10-27T09:12:10Z
-    name: tenant3-vip
+  - containerID: docker://a3fa625f3a72bb14e3f3f81720ab7148ba84bec6d41ed67ab0ff5d60a59b5d38
+    image: docker.dtdream.com/adb/adb-control:v1.1.0
+    imageID: docker://sha256:9b210acf397473cdc418f57c077871f25d9a81f878a7fb6da889335b21fabc7a
+    lastState: {}
+    name: tenant3-master
     ready: true
-    restartCount: 1
+    restartCount: 0
     state:
       running:
-        startedAt: 2017-10-27T09:12:13Z
+        startedAt: 2017-10-27T09:12:11Z
   hostIP: 192.168.143.72
   phase: Running
-  podIP: 192.168.143.72
+  podIP: 10.244.0.19
   startTime: 2017-10-27T09:12:09Z
